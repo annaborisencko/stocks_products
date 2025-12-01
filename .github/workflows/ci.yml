@@ -19,7 +19,7 @@ jobs:
       ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
     services: #Перечисляем все сревисы
       postgresql_main: 
-        image: postgres:12 #Образ для постгреса
+        image: postgres:latest #Образ для постгреса
         env: #Переменные окружения для постгреса обязательно указываем
           POSTGRES_DB: ${{ env.DB_NAME }}
           POSTGRES_USER: ${{ env.DB_USER }}
