@@ -136,3 +136,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ROOT_URLCONF = 'stocks_products.urls'
+
+REST_FRAMEWORK = {
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+}
