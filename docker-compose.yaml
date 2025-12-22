@@ -1,0 +1,61 @@
+networks:
+  backend:
+  db_net:
+
+services:
+  redis:
+    image: redis:latest
+
+  postgres:
+    image: postgres:alpine
+    env_file:
+    - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Для сохранения данных
+      - .:/docker-entrypoint-initdb.d
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2G
+      # replicas: 2
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    ports:
+      - "5433:5432"
+    networks:
+      - db_net
+
+  pg_admin:
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@yandex.resources
+      - PGADMIN_DEFAULT_PASSWORD=adminpwd
+      - PGADMIN_CONFIG_SERVER_MODE=False
+    ports: 
+      - "9999:80"
+    networks:
+      - db_net
+
+  django_app:
+    build: .
+    ports:
+      - "4444:5000"
+    networks:
+      - db_net
+    depends_on:
+      postgres:
+        condition: service_healthy
+        restart: True
+      redis:
+        condition: service_started
+    # command: python3 manage.py runserver 0.0.0.0:5000
+
+volumes:
+  postgres_data:
+
